@@ -2,6 +2,8 @@ package cn.edu.pku.sunjiajing.miniweather;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -99,7 +101,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if(view.getId() == R.id.title_update_btn){
 
             SharedPreferences sharedPreferences = getSharedPreferences("config",MODE_PRIVATE);
-            String cityCode = sharedPreferences.getString("main_city_code","101010100");
+            String cityCode = sharedPreferences.getString("main_city_code","101010100");//101160101 101010100
             Log.d("myWeather",cityCode);
 
             if(NetUtil.getNetworkState(this) != NetUtil.NETWOR_NONE){
@@ -244,6 +246,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         return todayWeather;
     }
 
+
     void updateTodayWeather(TodayWeather todayWeather){
         city_name_Tv.setText(todayWeather.getCity()+"天气");
         cityTv.setText(todayWeather.getCity());
@@ -255,6 +258,99 @@ public class MainActivity extends Activity implements View.OnClickListener {
         temperatureTv.setText(todayWeather.getHigh()+"~"+ todayWeather.getLow());
         climateTv.setText(todayWeather.getType());
         windTv.setText("风力:"+todayWeather.getFengli());
+        
+        //更新天气图片
+        Bitmap bmweather;
+        String weather = todayWeather.getType();
+        if(weather.equals("暴雪")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_baoxue);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("暴雨")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_baoyu);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("大暴雨")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_dabaoyu);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("大雪")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_daxue);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("大雨")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_dayu);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("多云")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_duoyun);
+            weatherImg.setImageBitmap(bmweather);
+        }
+        else if(weather.equals("雷阵雨")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_leizhenyu);
+            weatherImg.setImageBitmap(bmweather);
+        }
+        else if(weather.equals("雷阵雨冰雹")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_leizhenyubingbao);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("晴")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_qing);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("沙尘暴")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_shachenbao);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("特大暴雨")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_tedabaoyu);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("雾")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_wu);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("晴")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_qing);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("小雪")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_xiaoxue);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("小雨")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_xiaoyu);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("阴")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_yin);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("雨夹雪")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_yujiaxue);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("阵雪")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_zhenxue);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("阵雨")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_zhenyu);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("中雪")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_zhongxue);
+            weatherImg.setImageBitmap(bmweather);
+        }else if(weather.equals("中雨")){
+            bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_zhongyu);
+            weatherImg.setImageBitmap(bmweather);
+        }
+        
+        //更新pm图片
+        Bitmap bmpm;
+        int pm25 = Integer.parseInt(todayWeather.getPm25());
+        if(pm25 >= 0 && pm25 <=50){
+            bmpm = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_0_50);
+            pmImg.setImageBitmap(bmpm);
+        }else if(pm25 >= 51 && pm25 <= 100){
+            bmpm = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_51_100);
+            pmImg.setImageBitmap(bmpm);
+        }else if(pm25 >= 101 && pm25 <= 150){
+            bmpm = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_101_150);
+            pmImg.setImageBitmap(bmpm);
+        }else if(pm25 >= 151 && pm25 <= 200){
+            bmpm = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_151_200);
+            pmImg.setImageBitmap(bmpm);
+        }else if(pm25 >= 201 && pm25 <= 300){
+            bmpm = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_201_300);
+            pmImg.setImageBitmap(bmpm);
+        }else if(pm25 > 300){
+            bmpm = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_greater_300);
+            pmImg.setImageBitmap(bmpm);
+        }
         Toast.makeText(MainActivity.this,"更新成功!",Toast.LENGTH_SHORT).show();
     }
 }
