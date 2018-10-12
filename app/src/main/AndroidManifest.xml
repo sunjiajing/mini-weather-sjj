@@ -18,8 +18,12 @@
                 <action android:name="android.intent.action.MAUN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+
+        <activity android:name="cn.edu.pku.sunjiajing.miniweather.SelectCity">
 
         </activity>
+
     </application>
 
 </manifest>
