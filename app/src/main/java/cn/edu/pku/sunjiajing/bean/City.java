@@ -1,6 +1,6 @@
 package cn.edu.pku.sunjiajing.bean;
 
-public class City {
+public class City{
     private String province;
     private String city;
     private String number;
@@ -64,4 +64,6 @@ public class City {
     public void setAllFristPY(String allFristPY) {
         this.allFristPY = allFristPY;
     }
+
+
 }
