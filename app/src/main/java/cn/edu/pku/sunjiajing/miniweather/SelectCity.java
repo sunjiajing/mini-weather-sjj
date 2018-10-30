@@ -40,8 +40,6 @@ public class SelectCity extends Activity {
     private ClearEditText eSearch; //输入框
     private SelectCityAdapter adapter; //ListView的适配器
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);

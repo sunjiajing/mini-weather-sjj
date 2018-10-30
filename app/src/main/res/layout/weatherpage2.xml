@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <!--未来四到六天天气信息-->
+    <RelativeLayout
+        android:id="@+id/weather_future2"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <!--明日天气信息-->
+        <RelativeLayout
+            android:id="@+id/day4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true">
+            <!--第四日日期-->
+            <TextView
+                android:id="@+id/date04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:text="29日 星期一"
+                android:textSize="12sp"/>
+            <!--第四日天气图标-->
+            <ImageView
+                android:id="@+id/weather04_pic"
+                android:layout_width="100.0dip"
+                android:layout_height="100.0dip"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@id/weather04"
+                android:layout_below="@id/date04"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/biz_plugin_weather_xiaoxue"/>
+            <!--第四日最低~最高温度-->
+            <TextView
+                android:id="@+id/weather04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/weather04_tips"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:text="3°C~5°C"
+                android:textSize="15sp"
+                android:textColor="#cfffffff" />
+            <!--第四日天气状况-->
+            <TextView
+                android:id="@+id/weather04_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/fengli04"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:text="今日 小雪"
+                android:textSize="12sp"
+                android:textColor="#cfffffff"/>
+            <!--第四日风力信息-->
+            <TextView
+                android:id="@+id/fengli04"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="45dp"
+                android:text="微风"
+                android:textSize="12sp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+        <!--第五日天气信息-->
+        <RelativeLayout
+            android:id="@+id/day5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true">
+            <!--第五日日期-->
+            <TextView
+                android:id="@+id/date05"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:text="29日 星期一"
+                android:textSize="12sp"/>
+            <!--第五日天气图标-->
+            <ImageView
+                android:id="@+id/weather05_pic"
+                android:layout_width="100.0dip"
+                android:layout_height="100.0dip"
+                android:layout_below="@+id/date05"
+                android:layout_above="@id/weather05"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/biz_plugin_weather_qing"/>
+            <!--第五日最低~最高温度-->
+            <TextView
+                android:id="@+id/weather05"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/weather05_tips"
+                android:layout_marginBottom="5dp"
+                android:text="3°C~5°C"
+                android:textSize="15sp"
+                android:textColor="#cfffffff"
+                android:layout_centerHorizontal="true" />
+            <!--第五日天气状况-->
+            <TextView
+                android:id="@+id/weather05_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/fengli05"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="5dp"
+                android:text= "明日 晴"
+                android:textSize="12sp"
+                android:textColor="#cfffffff" />
+            <!--第五日风力信息-->
+            <TextView
+                android:id="@+id/fengli05"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="45dp"
+                android:text="微风"
+                android:textSize="12sp"
+                android:layout_alignParentBottom="true"/>
+        </RelativeLayout>
+
+
+        <!--第六日天气信息-->
+        <RelativeLayout
+            android:id="@+id/day6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true">
+            <!--第六日日期-->
+            <TextView
+                android:id="@+id/date06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:text="29日 星期一"
+                android:textSize="12sp"/>
+            <!--第六日天气图标-->
+            <ImageView
+                android:id="@+id/weather06_pic"
+                android:layout_width="100.0dip"
+                android:layout_height="100.0dip"
+                android:layout_below="@id/date06"
+                android:layout_above="@id/weather06"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="10dp"
+                android:src="@drawable/biz_plugin_weather_qing"/>
+            <!--第六日最低~最高温度-->
+            <TextView
+                android:id="@+id/weather06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/weather06_tips"
+                android:text="3°C~5°C"
+                android:textSize="15sp"
+                android:textColor="#cfffffff"
+                android:layout_marginBottom="5dp"
+                android:layout_centerHorizontal="true" />
+            <!--第六日天气状况-->
+            <TextView
+                android:id="@+id/weather06_tips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@id/fengli06"
+                android:text= "后日 晴"
+                android:textSize="12sp"
+                android:textColor="#cfffffff"
+                android:layout_marginBottom="5dp"
+                android:layout_centerHorizontal="true" />
+            <!--第六日风力信息-->
+            <TextView
+                android:id="@+id/fengli06"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="45dp"
+                android:text="微风"
+                android:textSize="12sp"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true" />
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>
