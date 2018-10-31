@@ -115,7 +115,7 @@ public class SelectCity extends Activity {
                     filterDataList.clear();
                     //根据输入框中的内容开始过滤
                     for(City city:allCities){
-                        if (city.getAllPY().indexOf(filterStr.toString())!= -1|| city.getAllFristPY().indexOf(filterStr.toString())!= -1){
+                        if (city.getAllPY().indexOf(filterStr.toString().trim())!= -1|| city.getAllFristPY().indexOf(filterStr.toString().trim())!= -1){
                             filterDataList.add(city);
                         }
                     }

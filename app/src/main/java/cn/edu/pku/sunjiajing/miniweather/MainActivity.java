@@ -14,10 +14,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.solidfire.gson.Gson;
+import com.baidu.location.BDAbstractLocationListener;
+import com.baidu.location.BDLocation;
+import com.baidu.location.LocationClient;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -38,11 +41,12 @@ import cn.edu.pku.sunjiajing.util.NetUtil;
 
 public class MainActivity extends Activity implements View.OnClickListener {
 
-    private static final int UPDATA_TODAY_WEATHER = 1;
+    private static final int UPDATE_TODAY_WEATHER = 1;
 
-    private ImageView mUpdateBtn;
+    private ImageView mUpdateBtn;//更新按钮
+    private ProgressBar pbForUpdate; //更新按钮相对应的进度条
 
-    private ImageView mCitySelect;
+    private ImageView mCitySelect;//选择城市安妮
 
     private TextView cityTv, timeTv, humidityTv, weekTv, pmDataTv, pmQualityTv,
             temperatureTv, climateTv, windTv, city_name_Tv;
@@ -62,12 +66,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ViewPagerAdapter vpAdapter2;
     private ViewPager vp2;
     private List<View> views2 = new ArrayList<>();
+    
+    //定位相关变量
+    private static final int UPDATE_LOCATION = 2;
+    private ImageView mLocateBtn;//定位按钮
+    public LocationClient mLocationClient = null;//使用百度定位接口
+    private MyLocationListener mLocationListener = new MyLocationListener();
+    private String cityname;
+
 
     //主进程
     private Handler mHandler = new Handler(){
         public void handleMessage(android.os.Message msg){
             switch (msg.what){
-                case UPDATA_TODAY_WEATHER:
+                case UPDATE_TODAY_WEATHER:
                     updateTodayWeather((TodayWeather) msg.obj);
                     break;
                 default:
@@ -82,6 +94,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.weather_info);
 
         mUpdateBtn = (ImageView) findViewById(R.id.title_update_btn);
+        pbForUpdate = (ProgressBar) findViewById(R.id.title_update_progress);//更新按钮对应的进度条
         mUpdateBtn.setOnClickListener(this);
 
         if(NetUtil.getNetworkState(this) != NetUtil.NETWOR_NONE){
@@ -94,6 +107,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         mCitySelect = (ImageView) findViewById(R.id.title_city_manager);
         mCitySelect.setOnClickListener(this);
+
+        //定位
+
 
         initView();
     }
@@ -115,6 +131,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         //从SharedPreferences中获取用户上一次选择的城市信息，在页面展示
         SharedPreferences sp = getSharedPreferences("todayWeather",MODE_PRIVATE);
+
         String city_name = sp.getString("city_name_Tv","N/A");
         String city = sp.getString("cityTv","N/A");
         String time = sp.getString("timeTv","N/A");
@@ -279,6 +296,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         //用户点击更新按钮后的结果
         if(view.getId() == R.id.title_update_btn){
+            mUpdateBtn.setVisibility(View.GONE);
+            pbForUpdate.setVisibility(View.VISIBLE);
             //从sharedPreferences中获取用户在SelectActivity中选择的城市的cityCode，并根据该cityCode更新数据
             SharedPreferences sharedPreferences = getSharedPreferences("currentCity",MODE_PRIVATE);
             String cityCode = sharedPreferences.getString("cityCode","101010100");//101160101
@@ -344,6 +363,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     //将todayWeather对象的各个属性值存入SharedPreferences中，以便在初始化MainActivity时将用户上一次选择的城市数据展示
                     SharedPreferences sp = getSharedPreferences("todayWeather",MODE_PRIVATE);
                     SharedPreferences.Editor editor = sp.edit();
+
                     editor.putString("city_name_Tv",todayWeather.getCity()+"天气");
                     editor.putString("cityTv",todayWeather.getCity());
                     editor.putString("timeTv",todayWeather.getUpdatetime()+ "发布");
@@ -393,7 +413,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if(todayWeather != null){
                         Log.d("myWeather", todayWeather.toString());
                         Message msg = new Message();
-                        msg.what = UPDATA_TODAY_WEATHER; //传递给主进程
+                        msg.what = UPDATE_TODAY_WEATHER; //传递给主进程
                         msg.obj = todayWeather; //传递给主进程
                         mHandler.sendMessage(msg);
                     }
@@ -816,6 +836,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
             pmImg.setImageBitmap(bmpm);
         }
         Toast.makeText(MainActivity.this,"更新成功!",Toast.LENGTH_SHORT).show();
+        mUpdateBtn.setVisibility(View.VISIBLE);
+        pbForUpdate.setVisibility(View.GONE);
     }
 
     //根据天气状况更新照片
@@ -892,6 +914,18 @@ public class MainActivity extends Activity implements View.OnClickListener {
         }else{
             bmweather = BitmapFactory.decodeResource(getResources(),R.drawable.biz_plugin_weather_qing);
             wImg.setImageBitmap(bmweather);
+        }
+    }
+
+    //定位服务监听器类MyLocationListener，继承了BDAbstractLocationListener
+    class MyLocationListener extends BDAbstractLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation location){
+            //此处的BDLocation为定位结果信息类，通过它的各种get方法可获取定位相关的全部结果
+            String city = location.getCity(); //获取城市
+            String district = location.getDistrict(); //获取区县
+            cityname = city;
+            Log.d("myinfo", cityname);
         }
     }
 }

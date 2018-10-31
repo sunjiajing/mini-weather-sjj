@@ -1,9 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="cn.edu.pku.sunjiajing.miniweather">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name="cn.edu.pku.sunjiajing.app.MyApplication"
@@ -12,19 +12,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-
-        <activity android:name="cn.edu.pku.sunjiajing.miniweather.MainActivity" android:usesCleartextTraffic = "true">
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".MainActivity"
+            android:usesCleartextTraffic="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAUN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <action android:name="android.intent.action.MAUN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name="cn.edu.pku.sunjiajing.miniweather.SelectCity">
-
-        </activity>
-
+        <activity android:name=".SelectCity"></activity>
     </application>
 
 </manifest>
