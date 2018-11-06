@@ -1,13 +1,16 @@
 package cn.edu.pku.sunjiajing.miniweather;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.os.Message;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -21,6 +24,7 @@ import android.widget.Toast;
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -36,6 +40,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.pku.sunjiajing.app.MyApplication;
+import cn.edu.pku.sunjiajing.bean.City;
 import cn.edu.pku.sunjiajing.bean.TodayWeather;
 import cn.edu.pku.sunjiajing.util.NetUtil;
 
@@ -60,7 +66,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView type1Tv, type2Tv, type3Tv, type4Tv, type5Tv, type6Tv;//天气状况
     private ImageView weatherImg1, weatherImg2, weatherImg3, weatherImg4, weatherImg5, weatherImg6;//天气状况图片
     private TextView feng1, feng2, feng3, feng4, feng5, feng6;
-    private Context context = this;
     private  ImageView[] dots2;//导航小圆点
     private int[] ids2 = {R.id.weatheriv1, R.id.weatheriv2};//小圆点的imageview值
     private ViewPagerAdapter vpAdapter2;
@@ -71,8 +76,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private static final int UPDATE_LOCATION = 2;
     private ImageView mLocateBtn;//定位按钮
     public LocationClient mLocationClient = null;//使用百度定位接口
-    private MyLocationListener mLocationListener = new MyLocationListener();
-    private String cityname;
+    private MyLocationListener mLocationListener = new MyLocationListener(); //设置定位监控器
+    private LocationService.MyBinder binder = null;
+    private MyServiceConn myServiceConn;
+    private String cityname;//保存定位到的当前城市的城市名称
+    private List<City> cityList;//保存数据库中所有的城市数据
+
+    private String newCityCode = "101010100"; //定位到的城市和用户手动选择的城市中最先的城市
+
 
 
     //主进程
@@ -82,6 +93,22 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 case UPDATE_TODAY_WEATHER:
                     updateTodayWeather((TodayWeather) msg.obj);
                     break;
+                case UPDATE_LOCATION:
+                    String cityname = (String) msg.obj;
+                    String cityCode = null;
+                    Log.d("myinfo", cityname);
+                    for(City city:cityList) {
+                        if(cityname.substring(0,cityname.length()-1) .equals( city.getCity())){
+                            cityCode = city.getNumber();
+                        }
+                    }
+                    Log.d("myinfo", cityCode);
+
+                    SharedPreferences sharedPreferences = getSharedPreferences("locationCity", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("location_cityCode", cityCode);//供定位按钮根据该cityCode更新城市数据
+                    editor.commit();
+
                 default:
                     break;
             }
@@ -93,6 +120,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.weather_info);
 
+        //更新界面
         mUpdateBtn = (ImageView) findViewById(R.id.title_update_btn);
         pbForUpdate = (ProgressBar) findViewById(R.id.title_update_progress);//更新按钮对应的进度条
         mUpdateBtn.setOnClickListener(this);
@@ -105,11 +133,36 @@ public class MainActivity extends Activity implements View.OnClickListener {
             Toast.makeText(MainActivity.this,"网络挂了！",Toast.LENGTH_LONG).show();
         }
 
+        //选择城市
         mCitySelect = (ImageView) findViewById(R.id.title_city_manager);
         mCitySelect.setOnClickListener(this);
 
         //定位
+        //声明LocationClient类
+        mLocationClient = new LocationClient(getApplicationContext());
+        mLocationClient.registerLocationListener(mLocationListener);
+        //注册监听器函数
+        LocationClientOption option = new LocationClientOption();
+        option.setIsNeedAddress(true); //是否需要地址信息
+        mLocationClient.setLocOption(option);
+        //加载数据库中所有城市数据
+        initdata();
+        //启动百度地图定位service
+        initLocation();
+        mLocateBtn = (ImageView) findViewById(R.id.title_location);
+        mLocateBtn.setOnClickListener(this);
 
+        //引导界面
+        SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
+        int count = preferences.getInt("count", 0);
+        //判断程序第几次运行，如果是第一次运行则跳转到引导界面
+        if(count == 0){
+            Intent i = new Intent(MainActivity.this, Guide.class);
+            startActivity(i);
+        }
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("count", ++count);
+        editor.commit();
 
         initView();
     }
@@ -158,12 +211,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
         updateWeatherPIC(type, weatherImg);
 
         //初始化viewPager
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(this);
+        //LayoutInflater加载布局
         View one_page = inflater.inflate(R.layout.weatherpage1, null);
         View two_page = inflater.inflate(R.layout.weatherpage2, null);
         views2.add(one_page);
         views2.add(two_page);
-        vpAdapter2 = new ViewPagerAdapter(views2, context);
+        //为ViewPager添加适配器
+        vpAdapter2 = new ViewPagerAdapter(views2, this);
+        //获取ViewPager对象，指定其适配器
         vp2 = (ViewPager) findViewById(R.id.mViewpager);
         vp2.setAdapter(vpAdapter2);
 
@@ -284,6 +340,20 @@ public class MainActivity extends Activity implements View.OnClickListener {
         feng6.setText(fengli6);
     }
 
+    //加载数据库中所有城市数据
+    private void initdata(){
+        cityList = MyApplication.getInstance().getCityList();
+    }
+
+    //启动百度地图定位service
+    private void initLocation(){
+        Intent intent = new Intent(this, LocationService.class);
+        myServiceConn = new MyServiceConn();
+        startService(intent); //开启LocationService
+        bindService(intent, myServiceConn, Context.BIND_AUTO_CREATE);//绑定service
+    }
+
+
     @Override
     public void onClick(View view){
 
@@ -298,19 +368,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if(view.getId() == R.id.title_update_btn){
             mUpdateBtn.setVisibility(View.GONE);
             pbForUpdate.setVisibility(View.VISIBLE);
-            //从sharedPreferences中获取用户在SelectActivity中选择的城市的cityCode，并根据该cityCode更新数据
-            SharedPreferences sharedPreferences = getSharedPreferences("currentCity",MODE_PRIVATE);
-            String cityCode = sharedPreferences.getString("cityCode","101010100");//101160101
 
-            Log.d("myWeather",cityCode);
+            Log.d("myWeather",newCityCode);
 
             if(NetUtil.getNetworkState(this) != NetUtil.NETWOR_NONE){
                 Log.d("myWeather","网络OK");
-                queryWeatherCode(cityCode);
+                queryWeatherCode(newCityCode);
             }else{
                 Log.d("myWeather","网络挂了");
                 Toast.makeText(MainActivity.this,"网络挂了！",Toast.LENGTH_LONG).show();
             }
+        }
+
+        //用户点击定位按钮后的结果
+        if(view.getId() == R.id.title_location){
+            SharedPreferences sharedPreferences = getSharedPreferences("locationCity", MODE_PRIVATE);
+            String citycode = sharedPreferences.getString("location_cityCode", "101010100");
+            queryWeatherCode(citycode);
+            newCityCode = citycode;
+            Toast.makeText(MainActivity.this,"已定位到当前位置所在城市!",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -318,12 +394,15 @@ public class MainActivity extends Activity implements View.OnClickListener {
     protected void onActivityResult(int requestCode, int resultCode, Intent data){
         if(requestCode == 1 && resultCode == RESULT_OK){
             //从Intent中获取用户在SelectActivity中选择的城市的cityCode,并根据该cityCode更新数据
-            String newCityCode = data.getStringExtra("cityCode");
-            Log.d("myWeather","选择的城市代码为"+newCityCode);
+            String cityCode = data.getStringExtra("cityCode");
+
+            newCityCode = cityCode;
+
+            Log.d("myWeather","选择的城市代码为"+cityCode);
 
             if(NetUtil.getNetworkState(this) != NetUtil.NETWOR_NONE){
                 Log.d("myWeather","网络OK");
-                queryWeatherCode(newCityCode);
+                queryWeatherCode(cityCode);
             }else{
                 Log.d("myWeather","网络挂了");
                 Toast.makeText(MainActivity.this,"网络挂了！",Toast.LENGTH_LONG).show();
@@ -926,6 +1005,32 @@ public class MainActivity extends Activity implements View.OnClickListener {
             String district = location.getDistrict(); //获取区县
             cityname = city;
             Log.d("myinfo", cityname);
+        }
+    }
+
+    //负责MainActivity和LocationService进行通信的类
+    class MyServiceConn implements ServiceConnection{
+        //服务被绑定成功之后执行
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service){
+            //IBinder service为OnBind方法返回的Service实例
+            binder = (LocationService.MyBinder) service;
+            binder.getService().setDataCallback(new LocationService.DataCallback() {
+                @Override
+                public void datachanged(String str) {
+                    Message msg = new Message();
+                    msg.obj = str;
+                    msg.what = UPDATE_LOCATION;
+                    //发送通知
+                    mHandler.sendMessage(msg);
+                }
+            });
+        }
+
+        //服务崩溃或者被杀掉执行
+        @Override
+        public void onServiceDisconnected(ComponentName name){
+            binder = null;
         }
     }
 }
