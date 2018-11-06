@@ -45,6 +45,11 @@
             </intent-filter>
         </activity>
 
+        <!--启动界面-->
+        <activity android:name=".Guide">
+        </activity>
+
+        <!--选择城市界面-->
         <activity android:name=".SelectCity"></activity>
 
         <!--注册定位服务-->

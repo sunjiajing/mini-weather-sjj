@@ -152,7 +152,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mLocateBtn = (ImageView) findViewById(R.id.title_location);
         mLocateBtn.setOnClickListener(this);
 
-        //引导界面
+        //程序第一次执行，跳转到引导界面
         SharedPreferences preferences = getSharedPreferences("count", MODE_PRIVATE);
         int count = preferences.getInt("count", 0);
         //判断程序第几次运行，如果是第一次运行则跳转到引导界面
