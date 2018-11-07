@@ -45,9 +45,8 @@
             </intent-filter>
         </activity>
 
-        <!--启动界面-->
-        <activity android:name=".Guide">
-        </activity>
+        <!--引导界面-->
+        <activity android:name=".Guide"></activity>
 
         <!--选择城市界面-->
         <activity android:name=".SelectCity"></activity>
@@ -66,6 +65,9 @@
         <service
             android:name=".LocationService"
             android:exported="true">
+            <intent-filter>
+                <action android:name="cn.edu.pku.sunjiajing.miniweather.LocationService" />
+            </intent-filter>
         </service>
 
 

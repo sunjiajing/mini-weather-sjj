@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <!--未来三天天气信息-->
+    <!--未来两天天气信息-->
     <RelativeLayout
         android:id="@+id/weather_future1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true">
 
        <!--明日天气信息-->
         <RelativeLayout
@@ -21,6 +22,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
+                android:layout_alignParentTop="true"
                 android:text="29日 星期一"
                 android:textSize="12sp"/>
             <!--明日天气图标-->
@@ -72,7 +74,7 @@
             android:id="@+id/day2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true">
+            android:layout_alignParentRight="true">
             <!--后日日期-->
             <TextView
                 android:id="@+id/date02"
@@ -80,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="10dp"
+                android:layout_alignParentTop="true"
                 android:text="29日 星期一"
                 android:textSize="12sp"/>
             <!--后日天气图标-->
@@ -126,66 +129,6 @@
                 android:layout_alignParentBottom="true"/>
         </RelativeLayout>
 
-
-        <!--第三日天气信息-->
-        <RelativeLayout
-            android:id="@+id/day3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true">
-            <!--第三日日期-->
-            <TextView
-                android:id="@+id/date03"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10dp"
-                android:text="29日 星期一"
-                android:textSize="12sp"/>
-            <!--第三日天气图标-->
-            <ImageView
-                android:id="@+id/weather03_pic"
-                android:layout_width="100.0dip"
-                android:layout_height="100.0dip"
-                android:layout_below="@id/date03"
-                android:layout_above="@id/weather03"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10dp"
-                android:src="@drawable/biz_plugin_weather_qing"/>
-            <!--第三日最低~最高温度-->
-            <TextView
-                android:id="@+id/weather03"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/weather03_tips"
-                android:text="3°C~5°C"
-                android:textSize="15sp"
-                android:textColor="#cfffffff"
-                android:layout_marginBottom="5dp"
-                android:layout_centerHorizontal="true" />
-            <!--第三日天气状况-->
-            <TextView
-                android:id="@+id/weather03_tips"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_above="@id/fengli03"
-                android:text= "后日 晴"
-                android:textSize="12sp"
-                android:textColor="#cfffffff"
-                android:layout_marginBottom="5dp"
-                android:layout_centerHorizontal="true" />
-            <!--第三日风力信息-->
-            <TextView
-                android:id="@+id/fengli03"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingBottom="45dp"
-                android:text="微风"
-                android:textSize="12sp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true" />
-        </RelativeLayout>
-
     </RelativeLayout>
 
-</LinearLayout>
+</RelativeLayout>

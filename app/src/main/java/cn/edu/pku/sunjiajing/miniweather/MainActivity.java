@@ -60,12 +60,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private TodayWeather todayWeather;
 
-    //未来六天的天气信息
-    private TextView date1, date2, date3, date4, date5, date6;//未来六天日期
-    private TextView temperatureTv1, temperatureTv2, temperatureTv3, temperatureTv4, temperatureTv5, temperatureTv6;//温度信息
-    private TextView type1Tv, type2Tv, type3Tv, type4Tv, type5Tv, type6Tv;//天气状况
-    private ImageView weatherImg1, weatherImg2, weatherImg3, weatherImg4, weatherImg5, weatherImg6;//天气状况图片
-    private TextView feng1, feng2, feng3, feng4, feng5, feng6;
+    //未来四天的天气信息
+    private TextView date1, date2, date3, date4;//未来四天日期
+    private TextView temperatureTv1, temperatureTv2, temperatureTv3, temperatureTv4;//温度信息
+    private TextView type1Tv, type2Tv, type3Tv, type4Tv;//天气状况
+    private ImageView weatherImg1, weatherImg2, weatherImg3, weatherImg4;//天气状况图片
+    private TextView feng1, feng2, feng3, feng4;
     private  ImageView[] dots2;//导航小圆点
     private int[] ids2 = {R.id.weatheriv1, R.id.weatheriv2};//小圆点的imageview值
     private ViewPagerAdapter vpAdapter2;
@@ -84,8 +84,6 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
     private String newCityCode = "101010100"; //定位到的城市和用户手动选择的城市中最先的城市
 
-
-
     //主进程
     private Handler mHandler = new Handler(){
         public void handleMessage(android.os.Message msg){
@@ -96,19 +94,19 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 case UPDATE_LOCATION:
                     String cityname = (String) msg.obj;
                     String cityCode = null;
-                    Log.d("myinfo", cityname);
+                    Log.d("myinfo", cityname+"---second");
                     for(City city:cityList) {
                         if(cityname.substring(0,cityname.length()-1) .equals( city.getCity())){
                             cityCode = city.getNumber();
                         }
                     }
-                    Log.d("myinfo", cityCode);
+                    Log.d("myinfo", cityCode+"---third");
 
                     SharedPreferences sharedPreferences = getSharedPreferences("locationCity", MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putString("location_cityCode", cityCode);//供定位按钮根据该cityCode更新城市数据
                     editor.commit();
-
+                    break;
                 default:
                     break;
             }
@@ -137,18 +135,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mCitySelect = (ImageView) findViewById(R.id.title_city_manager);
         mCitySelect.setOnClickListener(this);
 
-        //定位
-        //声明LocationClient类
-        mLocationClient = new LocationClient(getApplicationContext());
-        mLocationClient.registerLocationListener(mLocationListener);
-        //注册监听器函数
-        LocationClientOption option = new LocationClientOption();
-        option.setIsNeedAddress(true); //是否需要地址信息
-        mLocationClient.setLocOption(option);
-        //加载数据库中所有城市数据
-        initdata();
-        //启动百度地图定位service
-        initLocation();
+        //定位按钮
+
         mLocateBtn = (ImageView) findViewById(R.id.title_location);
         mLocateBtn.setOnClickListener(this);
 
@@ -222,6 +210,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //获取ViewPager对象，指定其适配器
         vp2 = (ViewPager) findViewById(R.id.mViewpager);
         vp2.setAdapter(vpAdapter2);
+        vp2.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                for(int a = 0; a < ids2.length; a++){
+                    if(a == i){//设置选中效果
+                        dots2[a].setImageResource(R.drawable.page_indicator_focused);
+                    }else{//设置未选中效果
+                        dots2[a].setImageResource(R.drawable.page_indicator_unfocused);
+                    }
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
 
         //增加页面变化的监听事件，动态修改导航小圆点的属性
         dots2 = new ImageView[views2.size()];
@@ -229,128 +239,91 @@ public class MainActivity extends Activity implements View.OnClickListener {
             dots2[i] = (ImageView)findViewById(ids2[i]);
         }
 
-        //未来六天日期
+        //未来四天日期
         date1 = (TextView) one_page.findViewById(R.id.date01);
         date2 = (TextView) one_page.findViewById(R.id.date02);
-        date3 = (TextView) one_page.findViewById(R.id.date03);
+        date3 = (TextView) two_page.findViewById(R.id.date03);
         date4 = (TextView) two_page.findViewById(R.id.date04);
-        date5 = (TextView) two_page.findViewById(R.id.date05);
-        date6 = (TextView) two_page.findViewById(R.id.date06);
 
         String d1 = sp.getString("date1","N/A");
         String d2 = sp.getString("date2","N/A");
         String d3 = sp.getString("date3","N/A");
         String d4 = sp.getString("date4","N/A");
-        String d5 = sp.getString("date5","N/A");
-        String d6 = sp.getString("date6","N/A");
 
         date1.setText(d1);
         date2.setText(d2);
         date3.setText(d3);
         date4.setText(d4);
-        date5.setText(d5);
-        date6.setText(d6);
 
-        //未来六天天气状况图片
+        //未来四天天气状况图片
         weatherImg1 = (ImageView) one_page.findViewById(R.id.weather01_pic);//明天
         weatherImg2 = (ImageView) one_page.findViewById(R.id.weather02_pic);//后天
-        weatherImg3 = (ImageView) one_page.findViewById(R.id.weather03_pic);//第三天
+        weatherImg3 = (ImageView) two_page.findViewById(R.id.weather03_pic);//第三天
         weatherImg4 = (ImageView) two_page.findViewById(R.id.weather04_pic);//第四天
-        weatherImg5 = (ImageView) two_page.findViewById(R.id.weather05_pic);//第五天
-        weatherImg6 = (ImageView) two_page.findViewById(R.id.weather06_pic);//第六天
 
         String type1 = sp.getString("type1", "晴");
         String type2 = sp.getString("type2", "晴");
         String type3 = sp.getString("type3", "晴");
         String type4 = sp.getString("type4", "晴");
-        String type5 = sp.getString("type5", "晴");
-        String type6 = sp.getString("type6", "晴");
 
         updateWeatherPIC(type1, weatherImg1);
         updateWeatherPIC(type2, weatherImg2);
         updateWeatherPIC(type3, weatherImg3);
         updateWeatherPIC(type4, weatherImg4);
-        updateWeatherPIC(type5, weatherImg5);
-        updateWeatherPIC(type6, weatherImg6);
 
-        //未来六天最高温度、最低温度
+        //未来四天最高温度、最低温度
         temperatureTv1 = (TextView) one_page.findViewById(R.id.weather01);//明天
         temperatureTv2 = (TextView) one_page.findViewById(R.id.weather02);//后天
-        temperatureTv3 = (TextView) one_page.findViewById(R.id.weather03);//第三天
+        temperatureTv3 = (TextView) two_page.findViewById(R.id.weather03);//第三天
         temperatureTv4 = (TextView) two_page.findViewById(R.id.weather04);//第四天
-        temperatureTv5 = (TextView) two_page.findViewById(R.id.weather05);//第五天
-        temperatureTv6 = (TextView) two_page.findViewById(R.id.weather06);//第六天
 
         String temperaturetv1 = sp.getString("temperature1Tv","N/A");
         String temperaturetv2 = sp.getString("temperature2Tv","N/A");
         String temperaturetv3 = sp.getString("temperature3Tv","N/A");
         String temperaturetv4 = sp.getString("temperature4Tv","N/A");
-        String temperaturetv5 = sp.getString("temperature5Tv","N/A");
-        String temperaturetv6 = sp.getString("temperature6Tv","N/A");
 
         temperatureTv1.setText(temperaturetv1);
         temperatureTv2.setText(temperaturetv2);
         temperatureTv3.setText(temperaturetv3);
         temperatureTv4.setText(temperaturetv4);
-        temperatureTv5.setText(temperaturetv5);
-        temperatureTv6.setText(temperaturetv6);
 
-        //未来六天天气状况
+        //未来四天天气状况
         type1Tv = (TextView) one_page.findViewById(R.id.weather01_tips);//明天
         type2Tv = (TextView) one_page.findViewById(R.id.weather02_tips);//后天
-        type3Tv = (TextView) one_page.findViewById(R.id.weather03_tips);//第三天
+        type3Tv = (TextView) two_page.findViewById(R.id.weather03_tips);//第三天
         type4Tv = (TextView) two_page.findViewById(R.id.weather04_tips);//第四天
-        type5Tv = (TextView) two_page.findViewById(R.id.weather05_tips);//第五天
-        type6Tv = (TextView) two_page.findViewById(R.id.weather06_tips);//第六天
 
         String type1tv = sp.getString("type1Tv","N/A");
         String type2tv = sp.getString("type2Tv","N/A");
         String type3tv = sp.getString("type3Tv","N/A");
         String type4tv = sp.getString("type4Tv","N/A");
-        String type5tv = sp.getString("type5Tv","N/A");
-        String type6tv = sp.getString("type6Tv","N/A");
 
         type1Tv.setText(type1tv);
         type2Tv.setText(type2tv);
         type3Tv.setText(type3tv);
         type4Tv.setText(type4tv);
-        type5Tv.setText(type5tv);
-        type6Tv.setText(type6tv);
 
-        //未来六天风力
+        //未来四天风力
         feng1 = (TextView) one_page.findViewById(R.id.fengli01);
         feng2 = (TextView) one_page.findViewById(R.id.fengli02);
-        feng3 = (TextView) one_page.findViewById(R.id.fengli03);
+        feng3 = (TextView) two_page.findViewById(R.id.fengli03);
         feng4 = (TextView) two_page.findViewById(R.id.fengli04);
-        feng5 = (TextView) two_page.findViewById(R.id.fengli05);
-        feng6 = (TextView) two_page.findViewById(R.id.fengli06);
 
         String fengli1 = sp.getString("fengli1","N/A");
         String fengli2 = sp.getString("fengli2","N/A");
         String fengli3 = sp.getString("fengli3","N/A");
         String fengli4 = sp.getString("fengli4","N/A");
-        String fengli5 = sp.getString("fengli5","N/A");
-        String fengli6 = sp.getString("fengli6","N/A");
 
         feng1.setText(fengli1);
         feng2.setText(fengli2);
         feng3.setText(fengli3);
         feng4.setText(fengli4);
-        feng5.setText(fengli5);
-        feng6.setText(fengli6);
+
     }
 
     //加载数据库中所有城市数据
     private void initdata(){
         cityList = MyApplication.getInstance().getCityList();
-    }
-
-    //启动百度地图定位service
-    private void initLocation(){
-        Intent intent = new Intent(this, LocationService.class);
-        myServiceConn = new MyServiceConn();
-        startService(intent); //开启LocationService
-        bindService(intent, myServiceConn, Context.BIND_AUTO_CREATE);//绑定service
     }
 
 
@@ -382,11 +355,30 @@ public class MainActivity extends Activity implements View.OnClickListener {
 
         //用户点击定位按钮后的结果
         if(view.getId() == R.id.title_location){
+
+            //声明LocationClient类
+            mLocationClient = new LocationClient(getApplicationContext());
+            mLocationClient.registerLocationListener(mLocationListener);
+            //注册监听器函数
+            LocationClientOption option = new LocationClientOption();
+            option.setIsNeedAddress(true); //是否需要地址信息
+            mLocationClient.setLocOption(option);
+            //加载数据库中所有城市数据
+            initdata();
+            //启动百度地图定位service
+            Intent intent = new Intent(this, LocationService.class);
+            myServiceConn = new MyServiceConn();
+            startService(intent); //开启LocationService
+            bindService(intent, myServiceConn, Context.BIND_AUTO_CREATE);//绑定service
+
+            //获取定位到的城市的cityCode,更新页面城市天气信息
             SharedPreferences sharedPreferences = getSharedPreferences("locationCity", MODE_PRIVATE);
             String citycode = sharedPreferences.getString("location_cityCode", "101010100");
+
             queryWeatherCode(citycode);
             newCityCode = citycode;
             Toast.makeText(MainActivity.this,"已定位到当前位置所在城市!",Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -455,7 +447,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     editor.putString("windTv","风力:"+todayWeather.getFengli());
                     editor.putString("type",todayWeather.getType());
 
-                    //未来六天日期
+                    //未来四天日期
                     editor.putString("date1", todayWeather.getDate1());
                     editor.putString("date2", todayWeather.getDate2());
                     editor.putString("date3", todayWeather.getDate3());
@@ -463,7 +455,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     editor.putString("date5", todayWeather.getDate5());
                     editor.putString("date6", todayWeather.getDate6());
 
-                    //未来六天最高温度~最低温度
+                    //未来四天最高温度~最低温度
                     editor.putString("temperature1Tv",todayWeather.getHigh1()+"~"+ todayWeather.getLow1());
                     editor.putString("temperature2Tv",todayWeather.getHigh2()+"~"+ todayWeather.getLow2());
                     editor.putString("temperature3Tv",todayWeather.getHigh3()+"~"+ todayWeather.getLow3());
@@ -471,7 +463,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     editor.putString("temperature5Tv",todayWeather.getHigh5()+"~"+ todayWeather.getLow5());
                     editor.putString("temperature6Tv",todayWeather.getHigh6()+"~"+ todayWeather.getLow6());
 
-                    //未来六天天气状况
+                    //未来四天天气状况
                     editor.putString("type1Tv",todayWeather.getType1());
                     editor.putString("type2Tv",todayWeather.getType2());
                     editor.putString("type3Tv",todayWeather.getType3());
@@ -479,7 +471,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     editor.putString("type5Tv",todayWeather.getType5());
                     editor.putString("type6Tv",todayWeather.getType6());
 
-                    //未来六天风
+                    //未来四天风
                     editor.putString("fengli1","风力:"+todayWeather.getFengli1());
                     editor.putString("fengli2","风力:"+todayWeather.getFengli2());
                     editor.putString("fengli3","风力:"+todayWeather.getFengli3());
@@ -564,7 +556,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 todayWeather.setFengxiang(xmlPullParser.getText());
                                 fengxiangCount++;
                             }
-                            //未来六天风向
+                            //未来四天风向
                             //明天风向
                             else if (xmlPullParser.getName().equals("fengxiang") && fengxiangCount == 1) {
                                 eventType = xmlPullParser.next();
@@ -607,7 +599,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 todayWeather.setFengli(xmlPullParser.getText());
                                 fengliCount++;
                             }
-                            //未来六天风力
+                            //未来四天风力
                             //明天
                             else if (xmlPullParser.getName().equals("fengli") && fengliCount == 1) {
                                 eventType = xmlPullParser.next();
@@ -650,7 +642,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 todayWeather.setDate(xmlPullParser.getText());
                                 dateCount++;
                             }
-                            //未来六天日期
+                            //未来四天日期
                             //明天
                             else if (xmlPullParser.getName().equals("date") && dateCount == 1) {
                                 eventType = xmlPullParser.next();
@@ -693,7 +685,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 todayWeather.setHigh(xmlPullParser.getText().substring(2).trim());
                                 highCount++;
                             }
-                            //未来六天最高气温
+                            //未来四天最高气温
                             //明天
                             else if (xmlPullParser.getName().equals("high") && highCount == 1) {
                                 eventType = xmlPullParser.next();
@@ -736,7 +728,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 todayWeather.setLow(xmlPullParser.getText().substring(2).trim());
                                 lowCount++;
                             }
-                            //未来六天最低气温
+                            //未来四天最低气温
                             //明天
                             else if (xmlPullParser.getName().equals("low") && lowCount == 1) {
                                 eventType = xmlPullParser.next();
@@ -779,7 +771,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                                 todayWeather.setType(xmlPullParser.getText());
                                 typeCount++;
                             }
-                            //未来六天天气状况
+                            //未来四天天气状况
                             //明天
                             else if (xmlPullParser.getName().equals("type") && typeCount == 1) {
                                 eventType = xmlPullParser.next();
@@ -847,44 +839,39 @@ public class MainActivity extends Activity implements View.OnClickListener {
         climateTv.setText(todayWeather.getType());
         windTv.setText("风力:"+todayWeather.getFengli());
 
-        //更新未来六天的日期
+        //更新未来四天的日期
         date1.setText(todayWeather.getDate1());
         date2.setText(todayWeather.getDate2());
         date3.setText(todayWeather.getDate3());
         date4.setText(todayWeather.getDate4());
-        date5.setText(todayWeather.getDate5());
-        date6.setText(todayWeather.getDate6());
-        //更新未来六天的最高~最低温度
+
+        //更新未来四天的最高~最低温度
         temperatureTv1.setText(todayWeather.getHigh1()+"~"+ todayWeather.getLow1());
         temperatureTv2.setText(todayWeather.getHigh2()+"~"+ todayWeather.getLow2());
         temperatureTv3.setText(todayWeather.getHigh3()+"~"+ todayWeather.getLow3());
         temperatureTv4.setText(todayWeather.getHigh4()+"~"+ todayWeather.getLow4());
-        temperatureTv5.setText(todayWeather.getHigh5()+"~"+ todayWeather.getLow5());
-        temperatureTv6.setText(todayWeather.getHigh6()+"~"+ todayWeather.getLow6());
-        //更新未来六天的天气状况
+
+        //更新未来四天的天气状况
         type1Tv.setText(todayWeather.getType1());
         type2Tv.setText(todayWeather.getType2());
         type3Tv.setText(todayWeather.getType3());
         type4Tv.setText(todayWeather.getType4());
-        type5Tv.setText(todayWeather.getType5());
-        type6Tv.setText(todayWeather.getType6());
-        //更新未来六天的风情况
+
+        //更新未来四天的风情况
         feng1.setText("风力:"+todayWeather.getFengli1());
         feng2.setText("风力:"+todayWeather.getFengli2());
         feng3.setText("风力:"+todayWeather.getFengli3());
         feng4.setText("风力:"+todayWeather.getFengli4());
-        feng5.setText("风力:"+todayWeather.getFengli5());
-        feng6.setText("风力:"+todayWeather.getFengli6());
+
 
         //更新今日天气图片
         updateWeatherPIC(todayWeather.getType(), weatherImg);
-        //更新未来六天天气照片
+        //更新未来四天天气照片
         updateWeatherPIC(todayWeather.getType1(), weatherImg1);
         updateWeatherPIC(todayWeather.getType2(), weatherImg2);
         updateWeatherPIC(todayWeather.getType3(), weatherImg3);
         updateWeatherPIC(todayWeather.getType4(), weatherImg4);
-        updateWeatherPIC(todayWeather.getType5(), weatherImg5);
-        updateWeatherPIC(todayWeather.getType6(), weatherImg6);
+
 
         //更新pm图片
         Bitmap bmpm;
@@ -1004,7 +991,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             String city = location.getCity(); //获取城市
             String district = location.getDistrict(); //获取区县
             cityname = city;
-            Log.d("myinfo", cityname);
+            Log.d("myinfo", cityname+"---first");
         }
     }
 
@@ -1030,6 +1017,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         //服务崩溃或者被杀掉执行
         @Override
         public void onServiceDisconnected(ComponentName name){
+            System.out.println("-----------stop-----------");
             binder = null;
         }
     }
