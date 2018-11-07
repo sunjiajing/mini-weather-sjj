@@ -4,6 +4,8 @@ import android.app.Application;
 import android.os.Environment;
 import android.util.Log;
 
+import com.umeng.commonsdk.UMConfigure;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,6 +32,7 @@ public class MyApplication extends Application {
         mApplication = this;
         mCityDB = openCityDB();
         initCityList();
+        UMConfigure.init(this, UMConfigure.DEVICE_TYPE_PHONE, "");
     }
 
     private void initCityList(){

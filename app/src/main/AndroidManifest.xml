@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="cn.edu.pku.sunjiajing.miniweather">
+    package="cn.edu.pku.sunjiajing.miniweather"
+    android:versionCode="2"
+    android:versionName="1.1">
 
     <!--设置网络访问权限-->
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -71,6 +73,8 @@
         </service>
 
 
+        <!--友盟应用统计服务-->
+        <meta-data android:value="5be2dc0ef1f55601c10004aa" android:name="UMENG_APPKEY"/>
     </application>
 
 </manifest>

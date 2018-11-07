@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.umeng.analytics.MobclickAgent;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -71,7 +73,7 @@ public class SelectCity extends Activity {
         mListView.setOnItemClickListener(new ItemClickEvent());
 
         //监听搜索框文本，根据搜索框文本内容的变化过滤城市数据，并更新ListView展示的城市
-        eSearch = (ClearEditText)findViewById(R.id.search_city);
+        eSearch = (ClearEditText) findViewById(R.id.search_city);
         eSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -126,7 +128,6 @@ public class SelectCity extends Activity {
         });
 
     }
-
 
     //继承OnItemClickListener, 当ListView中的子项目被点击的时候触发该函数
     private final class ItemClickEvent implements AdapterView.OnItemClickListener{
@@ -195,5 +196,18 @@ public class SelectCity extends Activity {
             cityCode.setText(city.getNumber());
             return view;
         }
+    }
+
+    //下面两个方法供友盟统计使用
+    @Override
+    protected void onResume(){
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause(){
+        super.onPause();
+        MobclickAgent.onPause(this);
     }
 }
