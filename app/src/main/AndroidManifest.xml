@@ -31,16 +31,16 @@
     <application
         android:name="cn.edu.pku.sunjiajing.app.MyApplication"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/start_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
+        android:roundIcon="@drawable/start_icon"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity"
+            android:name="cn.edu.pku.sunjiajing.miniweather.MainActivity"
             android:usesCleartextTraffic="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAUN" />
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
